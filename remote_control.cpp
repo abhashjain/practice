@@ -44,13 +44,14 @@ int leftClicks(int current, int destination,int min,int max){
 	clicks++;
 	current=min;
    }
-    for(int i=current;i!=destination;i++){
+    for(int i=current;i%max!=destination;){
         if(i==destination)
             break;
         clicks++;
         if(i==max){
             i=min;
         }
+	else	i=i+1;
     }
     return clicks;
 }
@@ -60,12 +61,13 @@ int rightClicks(int current ,int destination,int min,int max){
 	clicks++;
 	current=max;
     }
-    for(int i=current;i!=destination;i--){
+    for(int i=current;i!=destination;){
         if(i==destination)
             break;
         clicks++;
         if(i==min)
            i=max;
+    else i=i-1;
     }
     return clicks;
 }
