@@ -2,6 +2,7 @@
 using namespace std;
 
 #define ALPHA 26
+#define FREE(p) delete p;p = NULL;
 
 struct TrieNode{
 	struct TrieNode *children[ALPHA];
@@ -38,6 +39,47 @@ bool search(struct TrieNode *root, string key){
 	}
 	return (crawl!=NULL && crawl->isEnd);
 }
+int isFreeNode(struct TrieNode *pNode){
+	int i;
+	for(i=0;i<ALPHA;i++){
+		if(pNode->children[i])
+			return 0;
+	}
+	return 1;
+}
+int leafNode(struct TrieNode *pnode){
+	return (pnode->isEnd !=false);
+}
+
+bool deleteT(struct TrieNode *root,string key,int level ,int len){
+	if(root){
+		if(level == len){
+			if(root->isEnd){
+				root->isEnd = false;
+				if(isFreeNode(root)){
+					return true;
+				}
+				return false;
+			}
+		}
+		else {
+			int index = (int)key[level]-(int)'a';
+			if(deleteT(root->children[index] ,key,level+1,len)){
+				FREE(root->children[index]);
+				return (!leafNode(root) && isFreeNode(root));
+			}
+		}
+	}
+	return false;
+}
+
+void deleteTrie(struct TrieNode *root,string key){
+	int n = key.length();
+	if(n>0){
+		deleteT(root,key,0,n);
+	}
+}
+
 int main(){
 	struct TrieNode *root=getNode();
 	string dict[] = {"abhash","jain","kaman","akash","jain"};
@@ -52,5 +94,8 @@ int main(){
 	search(root,"abhash") ? cout<<"Found\n":cout<<"Not Found\n";
 	search(root,"abha") ? cout<<"Found\n":cout<<"Not Found\n";
 	search(root,"jain") ?cout<<"Found\n":cout<<"Not Found\n";
+	deleteTrie(root,"jain");
+	search(root,"jain") ?cout<<"now Found\n":cout<<"now Not Found\n";
+	
 	return 0;
 }
